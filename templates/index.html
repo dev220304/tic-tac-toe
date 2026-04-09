@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        button {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Tic Tac Toe</h1>
+
+<div class="grid" id="board"></div>
+
+<br>
+<button onclick="resetGame()">Reset Game</button>
+
+<script>
+let boardDiv = document.getElementById("board");
+let buttons = [];
+
+// Create grid
+for (let i = 0; i < 9; i++) {
+    let btn = document.createElement("button");
+    btn.className = "cell";
+
+    btn.onclick = function () {
+        fetch("/move", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({index: i})
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            // Update all buttons
+            for (let j = 0; j < 9; j++) {
+                buttons[j].innerText = data.board[j];
+            }
+
+            // Winner check
+            if (data.status === "win") {
+                setTimeout(() => {
+                    alert("Player " + data.player + " wins!");
+                }, 100);
+            }
+        });
+    };
+
+    buttons.push(btn);
+    boardDiv.appendChild(btn);
+}
+
+// Reset game
+function resetGame() {
+    fetch("/reset")
+    .then(() => {
+        for (let i = 0; i < 9; i++) {
+            buttons[i].innerText = "";
+        }
+    });
+}
+</script>
+
+</body>
+</html>
