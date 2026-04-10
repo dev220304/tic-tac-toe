@@ -2,18 +2,17 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      python: 3.9
     commands:
       - echo Installing dependencies...
-      - pip install -r requirements.txt || echo "No requirements file"
+      - pip install flask
 
   build:
     commands:
-      - echo Build started
-      - python app.py || echo "No app file"
-
-  post_build:
-    commands:
-      - echo Build completed
+      - echo Build started on `date`
+      - python -m py_compile app.py
+      - echo Build completed successfully
 
 artifacts:
   files:
